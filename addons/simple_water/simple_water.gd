@@ -7,6 +7,8 @@ export(float, 0.0, 100.0, 0.01) var waterDensity = 1.0 setget _set_density
 export(float, 0.01, 0.1, 0.01) var waveStrength = 0.01 setget _set_strength
 export(ImageTexture) var waterDudvMap = preload("res://addons/simple_water/textures/waterDUDV.png") setget _set_dudv
 export(float, 0.0, 2.0, 0.1) var refractiveFactor = 0.5 setget _set_refractFactor
+export(float, 0.0, 1.0, 0.01) var nearPlane = 0.05 setget _set_nearPlane
+export(float, 0.0, 100000.0, 10) var farPlane = 100 setget _set_farPlane
 
 onready var basevp = get_node('/root')
 var mat
@@ -30,6 +32,8 @@ func update():
 	mat.set_shader_param("waterDistortion", waveStrength)
 	mat.set_shader_param("dudvMap", waterDudvMap)
 	mat.set_shader_param("refractiveFactor", refractiveFactor)
+	mat.set_shader_param("nearPlane", nearPlane)
+	mat.set_shader_param("farPlane", farPlane)
 
 func _ready():
 	for i in get_children():
@@ -101,4 +105,12 @@ func _set_dudv(new):
 
 func _set_refractFactor(new):
 	refractiveFactor = new
+	update()
+
+func _set_farPlane(new):
+	farPlane = new
+	update()
+	
+func _set_nearPlane(new):
+	nearPlane = new
 	update()

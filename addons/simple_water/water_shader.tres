@@ -14,6 +14,8 @@ uniform float fogDensity;
 uniform float waterTiling;
 uniform float waterDistortion;
 uniform float refractiveFactor;
+uniform float nearPlane;
+uniform float farPlane;
 
 void vertex() {
 	UV = (WORLD_MATRIX * vec4(VERTEX, 0.0)).xz;
@@ -47,6 +49,12 @@ void fragment() {
 	//distortion *= 10.0;
 	//NORMAL = (INV_CAMERA_MATRIX * normalize(vec4(distortion.x, 1.0, distortion.y, 0.0))).rgb;
 	
+	// add smooth edges
+	float floorDistance = 2.0 * nearPlane * farPlane / (farPlane + nearPlane - (2.0 * depth - 1.0) * (farPlane - nearPlane));
+	float waterDistance = 2.0 * nearPlane * farPlane / (farPlane + nearPlane - (2.0 * FRAGCOORD.z - 1.0) * (farPlane - nearPlane));
+	float waterDepth = floorDistance - waterDistance;
+	
+	ALPHA = clamp(waterDepth / 1.0, 0.0, 1.0);
 	ALBEDO = mixedTex;
 }"
 
@@ -65,6 +73,8 @@ shader_param/fogDensity = 0.0
 shader_param/waterTiling = 0.3
 shader_param/waterDistortion = 0.01
 shader_param/refractiveFactor = 2.0
+shader_param/nearPlane = 0.05
+shader_param/farPlane = 100.0
 shader_param/reflectionTex = SubResource( 2 )
 shader_param/dudvMap = ExtResource( 1 )
 _sections_unfolded = [ "shader_param" ]
